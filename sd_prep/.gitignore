@@ -1,0 +1,7 @@
+# Cloned third-party repo (fetched by prep_sd_vgerris.sh at runtime)
+_vgerris_repo/
+
+# Generated SD card staging directory (contains binary ARM executables)
+sd_staging/
+
+# Backup dumps pulled from cameras over telnet
