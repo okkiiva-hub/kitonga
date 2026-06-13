@@ -1,26 +1,40 @@
-# SD Card Prep (Phase 3)
+# Phase 3a — SD Card Liberation, Cam A
 
-This directory will hold the SD-card contents for the no-solder camera liberation.
+## Method selected: VGerris/Anyka_ak3918_hacking_journey
 
-## Which method to use?
+See `PHASE3A_DECISION.md` for full reasoning. Short version: VGerris is the right match for the AK3918EV300 variant, generic across sensor configs, purely SD-run, zero flash writes.
 
-| Method | Repo | When to use |
-|--------|------|-------------|
-| MuhammedKalkan factory SD | MuhammedKalkan/Anyka-Camera-Firmware | First try — runs from SD, doesn't touch flash |
-| VGerris fuller toolkit | VGerris/Anyka_ak3918_hacking_journey | If you want PTZ + web UI |
-| ThatUsernameAlreadyExist | TECKIN-TC100-Anyka-AK3918-camera-hacks | If above fail; good wpa_supplicant approach |
+## Files in this directory
 
-## Steps (filled in after Phase 2 confirms firmware variant)
+| File | Purpose |
+|------|---------|
+| `prep_sd_vgerris.sh` | Clones VGerris repo, assembles `sd_staging/`, leaves WiFi as placeholder |
+| `FORMAT_INSTRUCTIONS.md` | How to format SD card (FAT32, 32K alloc) on macOS |
+| `after_boot_telnet.sh` | Post-boot: RTSP probe + telnet command guide + backup instructions |
+| `sd_staging/` | Created by prep script — contents to copy to SD card |
+| `PHASE3A_DECISION.md` | Full method comparison and reasoning |
 
-1. Clone the matching repo onto the MacBook
-2. Format a micro-SD as FAT32 (≤32 GB card recommended)
-3. Copy the correct folder contents to root of SD
-4. Edit `wpa_supplicant.conf` with your home Wi-Fi SSID/password
-5. Hand to human: insert SD, power-cycle camera
-6. Connect via telnet (root, no password) once the camera boots
-7. Back up: `tar -czf /mnt/sdcard/backup_cam1.tar.gz /usr /etc`
-8. Confirm RTSP stream works: `ffprobe rtsp://<ip>:554/stream`
+## Workflow
+
+```
+MacBook                         Human
+  │                               │
+  ├─ ./prep_sd_vgerris.sh         │
+  ├─ edit gergesettings.txt       │
+  │   (fill WiFi creds)           │
+  ├─ See FORMAT_INSTRUCTIONS.md   │
+  │                               ├─ Format SD card (FAT32, 32K)
+  │                               ├─ Copy Factory/ + anyka_hack/ to SD root
+  │                               ├─ Insert SD into Cam A
+  │                               └─ Power on Cam A
+  │                               │
+  ├─ Find camera IP               │
+  │   nmap -sn 192.168.x.0/24     │
+  │                               │
+  └─ ./after_boot_telnet.sh <ip>  │
+      (RTSP probe + backup guide) │
+```
 
 ## Reversal
 
-Pull SD card and reboot camera → returns to stock firmware. No flash writes.
+Pull SD card → reboot Cam A → stock firmware, no changes made.
